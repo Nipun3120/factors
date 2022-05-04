@@ -17,9 +17,9 @@ export const Home = () => {
         <div className="text-left">
 
             {/* Section1 */}
-            <div className="bg-sky-500 py-10">
+            <div className="bg-header-blue py-10">
                 <div className="w-5/12 m-auto">
-                    <h1 className="font-bold py-5 text-xl">Fine-grained Apparel category Classification & Try-On Recommender System </h1>
+                    <h1 className="font-bold py-5 text-3xl">Fine-grained Apparel category Classification & Try-On Recommender System </h1>
                     <span>The model which can superimpose the clothing images on the customers so they can see for themselves how the fit will look on their own bodies. </span>
                 </div>            
             </div>

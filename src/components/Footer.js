@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 
 export const Footer = () => {
     return(
-        <div className="bg-cyan-700 py-24">
+        <div className="bg-footer-blue pb-24 pt-16">
             <div className="flex justify-between items-center px-48 text-white">
                 <div className="flex flex-col text-left">
-                    <span>Creators</span>
+                    <span className="font-bold text-xl mb-2">Creators: </span>
                     <span>Gaurvi Rajwanshi 401903031</span>
                     <span>Deepanshi Shrivastava 40190306</span>
                     <span>Tanmay Shreshth 401903018</span>
@@ -17,8 +17,8 @@ export const Footer = () => {
                     <Link to="/signin">Sign In</Link>
                 </div>
             </div>
-            <div>
-                Logo
+            <div className="flex justify-center mt-10">
+                <img src='./assets/images/logo.png' alt="logo"/>
             </div>
         </div>
     )
