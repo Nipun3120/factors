@@ -3,6 +3,7 @@ require("./database/database.config").connect();
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
+const users = require("./api/users");
 
 // port
 const port = process.env.PORT || 4000;
@@ -11,13 +12,15 @@ const port = process.env.PORT || 4000;
 const app = express();
 const server = http.createServer(app);
 
+// cors
+app.use(cors({ origin: "http://localhost:3000" }));
 
 // middlewares
-const users = require("./api/users");
-app.use(express.json({ type: "application/json" }));
-
-// cors
-app.use(cors({ origin: "*" }));
+app.use(
+  express.json({ type: "application/json", limit: "18mb", extended: true })
+);
+app.use(express.urlencoded({ limit: "18mb", extended: true }));
+app.use("/user-images", express.static("user-images"));
 
 // routes
 app.use("/users", users);
