@@ -4,6 +4,7 @@ const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const users = require("./api/users");
+const images = require("./api/images");
 
 // port
 const port = process.env.PORT || 4000;
@@ -24,6 +25,7 @@ app.use("/user-images", express.static("user-images"));
 
 // routes
 app.use("/users", users);
+app.use("/images", images);
 
 // server listening
 server.listen(port, () => {
