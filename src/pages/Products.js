@@ -2,6 +2,9 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
+import { getImage } from "../api/image";
+import { Card, CardContent, CardMedia, Typography } from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 const products = [
   {
@@ -80,13 +83,40 @@ export const Products = () => {
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const handleOpen = () => setOpen(true);
+  const [base64Image, setBase64Image] = useState(null);
+  const [helperText, setHelperText] = useState({ isTrue: false, message: "" });
+
+  const handleOpen = async (e) => {
+    e.preventDefault();
+    const uid = localStorage.getItem("uid");
+    const productId = e.target.id;
+    setHelperText({ isTrue: false, message: "" });
+    setOpen(true);
+    getImage(uid).then(({ isError, errorMessage, image, imageUrl }) => {
+      if (isError) {
+        setLoading(false);
+        setOpen(false);
+        setHelperText({ isTrue: true, message: errorMessage });
+      } else {
+        const base64String = btoa(
+          String.fromCharCode(...new Uint8Array(image.data.data))
+        );
+        setBase64Image(`data:image/png;base64,${base64String}`);
+        setLoading(false);
+      }
+    });
+  };
   const handleClose = () => setOpen(false);
 
   return (
     <div>
       {/* Section 1 */}
       <div className="bg-header-blue">
+        {helperText.isTrue && (
+          <Alert className="mb-6" severity="error">
+            {helperText.message}
+          </Alert>
+        )}
         <div className="w-5/12 m-auto">
           <input placeholder="Search here" className="my-24 py-1 px-8"></input>
         </div>
@@ -94,7 +124,7 @@ export const Products = () => {
 
       {/* Section 2 */}
       <div className="grid grid-cols-3 gap-x-48 w-9/12 m-auto gap-y-16 my-10">
-        {products.map((product) => {
+        {products.map((product, index) => {
           return (
             <div key={product.id} className="flex flex-col">
               <img
@@ -102,7 +132,11 @@ export const Products = () => {
                 alt="women top"
                 className="h-80 w-60"
               />
-              <button onClick={handleOpen} className="bg-gray-300 mt-3 py-1">
+              <button
+                onClick={handleOpen}
+                id={product.id}
+                className="bg-gray-300 mt-3 py-1"
+              >
                 Try it on
               </button>
             </div>
@@ -116,12 +150,22 @@ export const Products = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          {loading && (
+        {loading ? (
+          <Box sx={style}>
             <LinearProgress color="success" className="sticky mb-4" />
-          )}
-          photo with cloth will appear here
-        </Box>
+            photo with cloth will appear here
+          </Box>
+        ) : (
+          <Card
+            sx={{ maxWidth: 345, marginTop: "100px" }}
+            className="sticky mx-auto mt-auto p-3"
+          >
+            <CardMedia component="img" height="140" image={base64Image} />
+            <div className="mt-3 cursor-pointer" onClick={() => setOpen(false)}>
+              Close
+            </div>
+          </Card>
+        )}
       </Modal>
     </div>
   );
