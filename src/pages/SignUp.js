@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
 import { signUp } from "../api/auth";
+import { useNavigate } from "react-router-dom";
 
 export const SignUp = () => {
+  let navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setpassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [userImage, setUserImage] = useState(null);
   const [helperText, setHelperText] = useState({ isTrue: false, message: "" });
+
+  useEffect(() => {
+    const uid = localStorage.getItem("uid");
+    if (uid) {
+      navigate("/clothing", { replace: true });
+    }
+  }, []);
 
   const submitHandler = async (e) => {
     if (

@@ -1,10 +1,11 @@
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 import { getImage } from "../api/image";
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const products = [
   {
@@ -68,23 +69,32 @@ const products = [
       "https://i.pinimg.com/736x/bf/e1/9a/bfe19a78858b503980f6d5b405b7f755.jpg",
   },
 ];
-export const Products = () => {
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
+export const Products = () => {
+  let navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [base64Image, setBase64Image] = useState(null);
   const [helperText, setHelperText] = useState({ isTrue: false, message: "" });
+
+  useEffect(() => {
+    const uid = localStorage.getItem("uid");
+    if (!uid) {
+      navigate("/signin", { replace: true });
+    }
+  }, []);
 
   const handleOpen = async (e) => {
     e.preventDefault();
@@ -101,7 +111,7 @@ export const Products = () => {
         const base64String = btoa(
           String.fromCharCode(...new Uint8Array(image.data.data))
         );
-        setBase64Image(`data:image/png;base64,${base64String}`);
+        setBase64Image(`data:${image.data.contentType};base64,${base64String}`); // content type --> mime-type
         setLoading(false);
       }
     });
