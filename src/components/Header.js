@@ -73,7 +73,7 @@ export const Header = () => {
               <Link
                 to="/uploadClothImage"
                 className={
-                  pathname === "/profile"
+                  pathname === "/uploadClothImage"
                     ? `underline decoration-white underline-offset-8`
                     : ""
                 }
