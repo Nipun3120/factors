@@ -18,8 +18,9 @@ export const SignIn = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const { isTrue, message } = await login({ email, password });
-    setHelperText({ isTrue, message });
+    const result = await login({ email, password });
+    console.log(result);
+    setHelperText({ isTrue: result.isTrue, message: result.message });
   };
 
   return (

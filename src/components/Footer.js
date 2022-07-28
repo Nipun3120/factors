@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 
 export const Footer = () => {
+  const uid = localStorage.getItem("uid");
   return (
     <div className="bg-footer-blue pb-24 pt-16">
       <div className="flex justify-between items-center px-48 text-white">
@@ -16,9 +17,9 @@ export const Footer = () => {
           <img src={logo} alt="logo" />
         </div>
         <div className="flex flex-col text-left">
-          <Link to="/clothing">Clothing</Link>
+          {uid && <Link to="/clothing">Clothing</Link>}
           <Link to="/about">About Us</Link>
-          <Link to="/signin">Sign In</Link>
+          {!uid && <Link to="/signin">Sign In</Link>}
         </div>
       </div>
     </div>

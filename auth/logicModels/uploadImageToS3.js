@@ -9,15 +9,12 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
-exports.uploadImageTos3 = async (buffer) => {
-  buffer = buffer.split(",");
-  let ContentType = buffer[0].split(":")[1].split(";")[0];
-  buffer = buffer.split(",")[1];
-
+exports.uploadImageTos3 = async (buffer, ContentType, directory) => {
   let imagePath = Date.now();
+
   const uploadParams = {
     Bucket: AWS_CONSTANTS.BUCKET_NAME,
-    Key: AWS_CONSTANTS.DIRECTORY + imagePath,
+    Key: directory + imagePath,
     Body: buffer,
     ACL: "public-read",
     ContentType,
@@ -29,7 +26,7 @@ exports.uploadImageTos3 = async (buffer) => {
         return null;
       } else if (data) {
         resolve(
-          `https://${AWS_CONSTANTS.BUCKET_NAME}.s3.${AWS_CONSTANTS.REGION}.amazonaws.com/${AWS_CONSTANTS.DIRECTORY}${imagePath}`
+          `https://${AWS_CONSTANTS.BUCKET_NAME}.s3.${AWS_CONSTANTS.REGION}.amazonaws.com/${directory}${imagePath}`
         );
       }
     });

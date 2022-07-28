@@ -7,17 +7,24 @@ const router = express.Router();
 const User = require("../database/users");
 const Image = require("../database/image");
 const upload = require("../middlewares/image");
+const ObjectId = require("mongodb").ObjectId;
 const { uploadImageTos3 } = require("../logicModels/uploadImageToS3");
+const { AWS_CONSTANTS } = require("../constants");
 
 router.post("/signup/", upload.single("userImage"), async (req, res) => {
   const url = req.protocol + "://" + req.get("host");
 
   const encryptedUserPassword = await bcrypt.hash(req.body.password, 10);
+  const s3ImageUrl = await uploadImageTos3(
+    fs.readFileSync("user-images/" + req.file.filename),
+    req.file.mimetype,
+    AWS_CONSTANTS.USER_DIRECTORY
+  );
   const user = new User({
     name: req.body.name,
     email: req.body.email,
     password: encryptedUserPassword,
-    imageUrl: url + "/users/user-images/" + req.file.filename,
+    imageUrl: s3ImageUrl,
     image: {
       data: fs.readFileSync("user-images/" + req.file.filename),
       contentType: req.file.mimetype,
@@ -53,18 +60,46 @@ router.post("/login/", async (req, res) => {
   }
 });
 
-router.get("/user-images/:image", async (req, res) => {
-  const imagePath = `user-images/${req.params.image}`;
-  // const image = User.find({ image: imagePath });
+router.post(
+  "/userImageUpdate/",
+  upload.single("userImage"),
+  async (req, res) => {
+    const url = req.protocol + "://" + req.get("host");
+    let uid = req.body;
+    uid = ObjectId(uid.uid);
 
-  const buffer = fs.createReadStream(imagePath);
-  // console.log(req.params.timestamp);
-  // res.send(buffer);
-  res.json({ buffer });
-});
+    const s3ImageUrl = await uploadImageTos3(
+      fs.readFileSync("user-images/" + req.file.filename),
+      req.file.mimetype,
+      AWS_CONSTANTS.USER_DIRECTORY
+    );
 
-router.get("/signup/", (req, res) => {
-  res.send("hi");
-});
+    console.log(uid);
+    User.updateOne(
+      { _id: uid },
+      {
+        $set: {
+          imageUrl: s3ImageUrl,
+          image: {
+            data: fs.readFileSync("user-images/" + req.file.filename),
+            contentType: req.file.mimetype,
+          },
+        },
+      }
+    )
+      .then((result) => {
+        User.findById({ _id: uid }).then((user) => {
+          console.log(user.email, user.imageUrl);
+          res
+            .json({ image: user.image, imageUrl: user.imageUrl, ok: true })
+            .status(200);
+        });
+      })
+      .catch((err) => {
+        console.log("error while updating, -> ", err);
+        res.json({ ok: false }).status(403);
+      });
+  }
+);
 
 module.exports = router;

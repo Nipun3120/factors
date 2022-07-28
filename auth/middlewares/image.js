@@ -1,19 +1,14 @@
 const multer = require("multer");
 
-//define storage for the images
 const storage = multer.diskStorage({
-  //destination for files
   destination: function (request, file, callback) {
     callback(null, "./user-images/");
   },
-
-  //add back the extension
   filename: function (request, file, callback) {
     callback(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
-//upload parameters for multer
 const upload = multer({
   storage: storage,
   limits: {
@@ -28,7 +23,7 @@ const upload = multer({
       cb(null, true);
     } else {
       cb(null, false);
-      return cb(new Error("Only .png, .jpg and .jpeg format allowed!"));
+      return cb(new Error("Only .png, .jpg and .jpeg format allowed!!!"));
     }
   },
 });

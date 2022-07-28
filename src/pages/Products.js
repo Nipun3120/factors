@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
-import { getImage } from "../api/image";
+import { fetchProductImages, getImage } from "../api/image";
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -88,12 +88,20 @@ export const Products = () => {
   const [loading, setLoading] = useState(true);
   const [base64Image, setBase64Image] = useState(null);
   const [helperText, setHelperText] = useState({ isTrue: false, message: "" });
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const uid = localStorage.getItem("uid");
     if (!uid) {
       navigate("/signin", { replace: true });
     }
+
+    const getProducts = async (uid) => {
+      const { productsArray } = await fetchProductImages(uid);
+      setProducts(productsArray);
+    };
+
+    getProducts(uid);
   }, []);
 
   const handleOpen = async (e) => {
@@ -108,9 +116,13 @@ export const Products = () => {
         setOpen(false);
         setHelperText({ isTrue: true, message: errorMessage });
       } else {
-        const base64String = btoa(
-          String.fromCharCode(...new Uint8Array(image.data.data))
-        );
+        const uintArray = new Uint8Array(image.data.data);
+        let resultString = "";
+        for (var i = 0; i < uintArray.length; i++) {
+          resultString += String.fromCharCode(uintArray[i]);
+        }
+
+        const base64String = btoa(resultString);
         setBase64Image(`data:${image.data.contentType};base64,${base64String}`); // content type --> mime-type
         setLoading(false);
       }
@@ -138,7 +150,7 @@ export const Products = () => {
           return (
             <div key={product.id} className="flex flex-col">
               <img
-                src={product.imageId}
+                src={product.imageLink}
                 alt="women top"
                 className="h-80 w-60"
               />
@@ -163,14 +175,14 @@ export const Products = () => {
         {loading ? (
           <Box sx={style}>
             <LinearProgress color="success" className="sticky mb-4" />
-            photo with cloth will appear here
+            your photo will be ready in a few seconds...
           </Box>
         ) : (
           <Card
             sx={{ maxWidth: 345, marginTop: "100px" }}
             className="sticky mx-auto mt-auto p-3"
           >
-            <CardMedia component="img" height="140" image={base64Image} />
+            <CardMedia component="img" height="340" image={base64Image} />
             <div className="mt-3 cursor-pointer" onClick={() => setOpen(false)}>
               Close
             </div>
