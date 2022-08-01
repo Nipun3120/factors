@@ -42,7 +42,7 @@ router.post("/fetchAllImages/", async (req, res) => {
     let productsArray = images.map((image, index) => {
       return {
         imageLink: image.imageLink,
-        id: index,
+        id: image._id,
       };
     });
     productsArray = productsArray.reverse();
@@ -85,6 +85,24 @@ router.post("/saveImage/", upload.single("userImage"), async (req, res) => {
         res.json({ message: "image not saved", ok: false }).status(400);
       });
   }
+});
+
+router.post("/getProduct/", async (req, res) => {
+  const uid = ObjectId(req.body.uid);
+  const productId = ObjectId(req.body.productId);
+
+  console.log(uid, productId);
+
+  let promiseArray = [];
+
+  promiseArray.push(
+    User.findById({ _id: uid }),
+    Image.findById({ _id: productId })
+  );
+
+  let result = await Promise.all(promiseArray);
+  console.log(result[0].imageUrl, result[1].imageLink);
+  res.send("okay");
 });
 
 module.exports = router;

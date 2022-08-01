@@ -2,73 +2,73 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
-import { fetchProductImages, getImage } from "../api/image";
+import { fetchProductImages, getImage, getProduct } from "../api/image";
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import { Navigate, useNavigate } from "react-router-dom";
 
-const products = [
-  {
-    id: 1,
-    imageId:
-      "https://asset1.cxnmarksandspencer.com/is/image/mands/SD_02_T37_3396T_VJ_X_EC_2?$PDP_INT_IMAGE_DESKTOP_DOUBLE$",
-  },
-  {
-    id: 2,
-    imageId:
-      "https://cdn.shopify.com/s/files/1/0398/7780/4188/products/27091151_43_600x.jpg?v=1646550773",
-  },
-  {
-    id: 3,
-    imageId:
-      "https://johnlewis.scene7.com/is/image/JohnLewis/005619867?$rsp-pdp-port-640$",
-  },
-  {
-    id: 4,
-    imageId:
-      "https://i.pinimg.com/736x/bf/e1/9a/bfe19a78858b503980f6d5b405b7f755.jpg",
-  },
-  {
-    id: 5,
-    imageId:
-      "https://johnlewis.scene7.com/is/image/JohnLewis/005619867?$rsp-pdp-port-640$",
-  },
-  {
-    id: 6,
-    imageId:
-      "https://i.pinimg.com/736x/bf/e1/9a/bfe19a78858b503980f6d5b405b7f755.jpg",
-  },
-  {
-    id: 7,
-    imageId:
-      "https://asset1.cxnmarksandspencer.com/is/image/mands/SD_02_T37_3396T_VJ_X_EC_2?$PDP_INT_IMAGE_DESKTOP_DOUBLE$",
-  },
-  {
-    id: 8,
-    imageId:
-      "https://cdn.shopify.com/s/files/1/0398/7780/4188/products/27091151_43_600x.jpg?v=1646550773",
-  },
-  {
-    id: 9,
-    imageId:
-      "https://johnlewis.scene7.com/is/image/JohnLewis/005619867?$rsp-pdp-port-640$",
-  },
-  {
-    id: 10,
-    imageId:
-      "https://i.pinimg.com/736x/bf/e1/9a/bfe19a78858b503980f6d5b405b7f755.jpg",
-  },
-  {
-    id: 11,
-    imageId:
-      "https://johnlewis.scene7.com/is/image/JohnLewis/005619867?$rsp-pdp-port-640$",
-  },
-  {
-    id: 12,
-    imageId:
-      "https://i.pinimg.com/736x/bf/e1/9a/bfe19a78858b503980f6d5b405b7f755.jpg",
-  },
-];
+// const products = [
+//   {
+//     id: 1,
+//     imageId:
+//       "https://asset1.cxnmarksandspencer.com/is/image/mands/SD_02_T37_3396T_VJ_X_EC_2?$PDP_INT_IMAGE_DESKTOP_DOUBLE$",
+//   },
+//   {
+//     id: 2,
+//     imageId:
+//       "https://cdn.shopify.com/s/files/1/0398/7780/4188/products/27091151_43_600x.jpg?v=1646550773",
+//   },
+//   {
+//     id: 3,
+//     imageId:
+//       "https://johnlewis.scene7.com/is/image/JohnLewis/005619867?$rsp-pdp-port-640$",
+//   },
+//   {
+//     id: 4,
+//     imageId:
+//       "https://i.pinimg.com/736x/bf/e1/9a/bfe19a78858b503980f6d5b405b7f755.jpg",
+//   },
+//   {
+//     id: 5,
+//     imageId:
+//       "https://johnlewis.scene7.com/is/image/JohnLewis/005619867?$rsp-pdp-port-640$",
+//   },
+//   {
+//     id: 6,
+//     imageId:
+//       "https://i.pinimg.com/736x/bf/e1/9a/bfe19a78858b503980f6d5b405b7f755.jpg",
+//   },
+//   {
+//     id: 7,
+//     imageId:
+//       "https://asset1.cxnmarksandspencer.com/is/image/mands/SD_02_T37_3396T_VJ_X_EC_2?$PDP_INT_IMAGE_DESKTOP_DOUBLE$",
+//   },
+//   {
+//     id: 8,
+//     imageId:
+//       "https://cdn.shopify.com/s/files/1/0398/7780/4188/products/27091151_43_600x.jpg?v=1646550773",
+//   },
+//   {
+//     id: 9,
+//     imageId:
+//       "https://johnlewis.scene7.com/is/image/JohnLewis/005619867?$rsp-pdp-port-640$",
+//   },
+//   {
+//     id: 10,
+//     imageId:
+//       "https://i.pinimg.com/736x/bf/e1/9a/bfe19a78858b503980f6d5b405b7f755.jpg",
+//   },
+//   {
+//     id: 11,
+//     imageId:
+//       "https://johnlewis.scene7.com/is/image/JohnLewis/005619867?$rsp-pdp-port-640$",
+//   },
+//   {
+//     id: 12,
+//     imageId:
+//       "https://i.pinimg.com/736x/bf/e1/9a/bfe19a78858b503980f6d5b405b7f755.jpg",
+//   },
+// ];
 
 const style = {
   position: "absolute",
@@ -86,9 +86,10 @@ export const Products = () => {
   let navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [base64Image, setBase64Image] = useState(null);
   const [helperText, setHelperText] = useState({ isTrue: false, message: "" });
   const [products, setProducts] = useState([]);
+  const [productTrial, setProductTrial] = useState("");
+  const [base64Image, setBase64Image] = useState(null);
 
   useEffect(() => {
     const uid = localStorage.getItem("uid");
@@ -108,25 +109,26 @@ export const Products = () => {
     e.preventDefault();
     const uid = localStorage.getItem("uid");
     const productId = e.target.id;
+    setLoading(true);
+    console.log(productId);
     setHelperText({ isTrue: false, message: "" });
     setOpen(true);
-    getImage(uid).then(({ isError, errorMessage, image, imageUrl }) => {
-      if (isError) {
-        setLoading(false);
-        setOpen(false);
-        setHelperText({ isTrue: true, message: errorMessage });
-      } else {
-        const uintArray = new Uint8Array(image.data.data);
-        let resultString = "";
-        for (var i = 0; i < uintArray.length; i++) {
-          resultString += String.fromCharCode(uintArray[i]);
+    getProduct(uid, productId).then(
+      ({ isError, errorMessage, image, imageUrl }) => {
+        if (isError) {
+          setLoading(false);
+          setOpen(false);
+          setHelperText({ isTrue: true, message: errorMessage });
+        } else {
+          if (imageUrl) {
+            setProductTrial(imageUrl);
+          } else {
+            setBase64Image(image);
+          }
+          setLoading(false);
         }
-
-        const base64String = btoa(resultString);
-        setBase64Image(`data:${image.data.contentType};base64,${base64String}`); // content type --> mime-type
-        setLoading(false);
       }
-    });
+    );
   };
   const handleClose = () => setOpen(false);
 

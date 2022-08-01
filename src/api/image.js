@@ -27,6 +27,32 @@ export const getImage = async (uid) => {
     name: result.data.name,
   };
 };
+export const getProduct = async (uid, productId) => {
+  const config = {
+    headers: { "content-type": "application/json" },
+  };
+
+  const result = await axios
+    .post(`${BACKEND_URL}/images/getProduct/`, { uid, productId }, config)
+    .catch((err) => {
+      console.log(err);
+      return {
+        isError: true,
+        errorMessage: "Try again please !!",
+        image: null,
+        imageUrl: null,
+        name: null,
+      };
+    });
+
+  return {
+    isError: false,
+    errorMessage: "",
+    image: result.data.image,
+    imageUrl: result.data.imageUrl,
+    name: result.data.name,
+  };
+};
 
 export const updateUserImage = async (formdata) => {
   const config = {
