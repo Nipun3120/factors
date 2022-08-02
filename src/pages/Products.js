@@ -90,6 +90,8 @@ export const Products = () => {
   const [products, setProducts] = useState([]);
   const [productTrial, setProductTrial] = useState("");
   const [base64Image, setBase64Image] = useState(null);
+  const [isAdmin, setAdmin] = useState(false);
+  const uid = localStorage.getItem("uid");
 
   useEffect(() => {
     const uid = localStorage.getItem("uid");
@@ -97,6 +99,7 @@ export const Products = () => {
       navigate("/signin", { replace: true });
     }
 
+    if (uid === "62e293b6f198d3149a27e5f4") setAdmin(true);
     const getProducts = async (uid) => {
       const { productsArray } = await fetchProductImages(uid);
       setProducts(productsArray);
@@ -109,8 +112,10 @@ export const Products = () => {
     e.preventDefault();
     const uid = localStorage.getItem("uid");
     const productId = e.target.id;
+
+    setBase64Image(null);
     setLoading(true);
-    console.log(productId);
+
     setHelperText({ isTrue: false, message: "" });
     setOpen(true);
     getProduct(uid, productId).then(
@@ -120,17 +125,18 @@ export const Products = () => {
           setOpen(false);
           setHelperText({ isTrue: true, message: errorMessage });
         } else {
-          if (imageUrl) {
-            setProductTrial(imageUrl);
-          } else {
-            setBase64Image(image);
-          }
+          setBase64Image(image);
           setLoading(false);
         }
       }
     );
   };
   const handleClose = () => setOpen(false);
+
+  const deleteProduct = (event) => {
+    event.preventDefafult();
+    // delete call
+  };
 
   return (
     <div>
@@ -156,13 +162,25 @@ export const Products = () => {
                 alt="women top"
                 className="h-80 w-60"
               />
-              <button
-                onClick={handleOpen}
-                id={product.id}
-                className="bg-gray-300 mt-3 py-1"
-              >
-                Try it on
-              </button>
+              <div className="flex flex-nowrap">
+                <button
+                  onClick={handleOpen}
+                  id={product.id}
+                  className="bg-gray-300 mt-3 flex-1 mr-2"
+                >
+                  Try it on
+                </button>
+
+                {isAdmin && (
+                  <button
+                    onClick={deleteProduct}
+                    id={product.id}
+                    className="bg-gray-300 mt-3 flex-1 ml-2"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}
