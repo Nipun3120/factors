@@ -9,8 +9,8 @@ export const Footer = () => {
         <div className="flex flex-col text-left">
           <span className="font-bold text-xl mb-2">Creators: </span>
           <span>Gaurvi Rajwanshi 401903031</span>
-          <span>Deepanshi Shrivastava 40190306</span>
-          <span>Tanmay Shreshth 401903018</span>
+          <span>Deepanshi Srivastava 401903006</span>
+          <span>Tanmay Shresth 401903018</span>
           <span>Dhairya Mahajan 401903010</span>
         </div>
         <div className="flex justify-center mt-10">
