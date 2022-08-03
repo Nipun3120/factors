@@ -108,3 +108,59 @@ export const uploadImageToDB = async (formdata) => {
       return { ok: false };
     });
 };
+
+export const deleteProduct = async (productId) => {
+  const config = {
+    headers: { "content-type": "application/json" },
+  };
+
+  const result = await axios
+    .post(`${BACKEND_URL}/images/deleteProduct/`, { productId }, config)
+    .catch((err) => {
+      console.log(err);
+      return {
+        isError: true,
+        errorMessage: "Try again please !!",
+      };
+    });
+
+  if (result.data.ok) {
+    return {
+      isError: false,
+      errorMessage: "",
+    };
+  } else {
+    return {
+      isError: true,
+      errorMessage: result.data.message,
+    };
+  }
+};
+
+export const deleteImage = async (uid) => {
+  // deletes user image
+  const config = {
+    headers: { "content-type": "application/json" },
+  };
+
+  const result = await axios
+    .post(`${BACKEND_URL}/users/deleteUserImage/`, { uid }, config)
+    .catch((err) => {
+      console.log(err);
+      return {
+        isError: true,
+        errorMessage: "Try again please !!",
+      };
+    });
+  if (result.data.ok) {
+    return {
+      message: "Image deleted",
+      error: false,
+    };
+  } else {
+    return {
+      message: "try again !!",
+      error: true,
+    };
+  }
+};

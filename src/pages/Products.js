@@ -2,7 +2,12 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
-import { fetchProductImages, getImage, getProduct } from "../api/image";
+import {
+  deleteProduct,
+  fetchProductImages,
+  getImage,
+  getProduct,
+} from "../api/image";
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -99,9 +104,10 @@ export const Products = () => {
       navigate("/signin", { replace: true });
     }
 
-    if (uid === "62e293b6f198d3149a27e5f4") setAdmin(true);
+    if (uid === "62e9ed62b487f78cdde77923") setAdmin(true);
     const getProducts = async (uid) => {
       const { productsArray } = await fetchProductImages(uid);
+      console.log(productsArray);
       setProducts(productsArray);
     };
 
@@ -133,9 +139,24 @@ export const Products = () => {
   };
   const handleClose = () => setOpen(false);
 
-  const deleteProduct = (event) => {
-    event.preventDefafult();
-    // delete call
+  const handleDelete = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setHelperText({ isTrue: true, message: "Deleting..." });
+    const productId = event.target.id;
+    console.log(productId);
+    console.log(products);
+    const result = await deleteProduct(productId);
+    if (result.isError) {
+      setHelperText({ isTrue: true, message: result.errorMessage });
+    } else {
+      const productsArray = products.filter(
+        (product) => product.id !== productId
+      );
+      setProducts(productsArray);
+      setHelperText({ isTrue: false, message: "" });
+    }
+    setLoading(false);
   };
 
   return (
@@ -153,39 +174,46 @@ export const Products = () => {
       </div>
 
       {/* Section 2 */}
-      <div className="grid grid-cols-3 gap-x-48 w-9/12 m-auto gap-y-16 my-10">
-        {products.map((product, index) => {
-          return (
-            <div key={product.id} className="flex flex-col">
-              <img
-                src={product.imageLink}
-                alt="women top"
-                className="h-80 w-60"
-              />
-              <div className="flex flex-nowrap">
-                <button
-                  onClick={handleOpen}
-                  id={product.id}
-                  className="bg-gray-300 mt-3 flex-1 mr-2"
-                >
-                  Try it on
-                </button>
-
-                {isAdmin && (
+      {products.length ? (
+        <div className="grid grid-cols-3 gap-x-48 w-9/12 m-auto gap-y-16 my-10">
+          {products.map((product, index) => {
+            return (
+              <div key={product.id} className="flex flex-col">
+                <img
+                  src={product.imageLink}
+                  alt="women top"
+                  className="h-80 w-60"
+                />
+                <div className="flex flex-nowrap">
                   <button
-                    onClick={deleteProduct}
+                    onClick={handleOpen}
                     id={product.id}
-                    className="bg-gray-300 mt-3 flex-1 ml-2"
+                    className="bg-gray-300 mt-3 flex-1 mr-2"
                   >
-                    Delete
+                    Try it on
                   </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
 
+                  {isAdmin && (
+                    <button
+                      onClick={handleDelete}
+                      id={product.id}
+                      className="bg-gray-300 mt-3 flex-1 ml-2"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="w-full h-1/2">
+          <Typography center variant="h4">
+            No Products Available
+          </Typography>
+        </div>
+      )}
       <Modal
         open={open}
         onClose={handleClose}

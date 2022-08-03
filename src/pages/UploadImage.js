@@ -14,7 +14,7 @@ export const UploadImage = () => {
   useEffect(() => {
     const uid = localStorage.getItem("uid");
 
-    if (uid !== "62e293b6f198d3149a27e5f4") {
+    if (uid !== "62e9ed62b487f78cdde77923") {
       navigate("/page-not-found");
     }
   });
@@ -34,6 +34,7 @@ export const UploadImage = () => {
           message: "Image Uploaded",
           error: false,
         });
+        navigate("/clothing");
       } else {
         setHelperText({
           isTrue: true,

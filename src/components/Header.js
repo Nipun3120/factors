@@ -9,7 +9,7 @@ export const Header = () => {
   const uid = localStorage.getItem("uid");
 
   useEffect(() => {
-    if (uid === "62e293b6f198d3149a27e5f4") setIsadmin(true);
+    if (uid === "62e9ed62b487f78cdde77923") setIsadmin(true);
   }, []);
 
   return (

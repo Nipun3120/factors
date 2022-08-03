@@ -10,7 +10,7 @@ import {
 import { Container } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getImage, updateUserImage } from "../api/image";
+import { deleteImage, getImage, updateUserImage } from "../api/image";
 import LinearProgress from "@mui/material/LinearProgress";
 
 const style = {
@@ -34,6 +34,7 @@ export const EditProfile = () => {
   const [userImage, setUserImage] = useState(null);
   const [showLoading, setLoading] = useState(false);
   const [s3Image, setImageUrl] = useState("");
+  const [noImage, setNoImage] = useState({ isTrue: false, message: "" });
 
   useEffect(() => {
     const uid = localStorage.getItem("uid");
@@ -76,28 +77,24 @@ export const EditProfile = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(s3Image);
+
     const uid = localStorage.getItem("uid");
     setLoading(true);
     let formData = new FormData();
     formData.append("uid", uid);
     formData.append("userImage", userImage);
+
     const resultImage = await updateUserImage(formData);
-    console.log(resultImage);
     setImageUrl(resultImage.imageurl);
+
     // const uintArray = new Uint8Array(resultImage.image.data.data);
     // console.log(uintArray);
     // let resultString = "";
     // for (var i = 0; i < uintArray.length; i++) {
     //   resultString += String.fromCharCode(uintArray[i]);
     // }
-
     // const base64String = btoa(resultString);
 
-    // // console.log(resultImage.data);
-    // // const base64String = btoa(
-    // //   String.fromCharCode(...new Uint8Array(resultImage.data.data))
-    // // );
     // setBase64Image(
     //   `data:${resultImage.data.contentType};base64,${base64String}`
     // );
@@ -105,6 +102,14 @@ export const EditProfile = () => {
     setLoading(false);
     setDisplayForm(false);
     console.log(s3Image);
+  };
+
+  const deleteUserImage = (event) => {
+    event.preventDefault();
+    const uid = localStorage.getItem("uid");
+    deleteImage(uid);
+    setUserImage(null);
+    setImageUrl(null);
   };
 
   return (
@@ -133,8 +138,12 @@ export const EditProfile = () => {
                 Submit
               </button>
             </Box>
-          ) : (
+          ) : s3Image ? (
             <CardMedia component="img" height="100" image={s3Image} />
+          ) : (
+            <Typography variant="h5" color="primary" className="p-5">
+              No Image
+            </Typography>
           )}
           <CardContent>
             {name.length ? (
@@ -145,11 +154,25 @@ export const EditProfile = () => {
           </CardContent>
           <CardActions>
             <Button size="large" onClick={formDisplayHandler}>
-              {displayForm ? <p>Cancel</p> : <p>Update Item</p>}
+              {s3Image ? (
+                displayForm ? (
+                  <p>Cancel</p>
+                ) : (
+                  <p>Update Image</p>
+                )
+              ) : (
+                <p>Upload Image</p>
+              )}
             </Button>
-            <Button size="large" disabled={s3Image ? false : true}>
-              Delete Image
-            </Button>
+            {s3Image && (
+              <Button
+                size="large"
+                disabled={s3Image ? false : true}
+                onClick={deleteUserImage}
+              >
+                Delete Image
+              </Button>
+            )}
           </CardActions>
         </Container>
       </Card>

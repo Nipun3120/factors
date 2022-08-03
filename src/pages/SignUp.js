@@ -133,7 +133,7 @@ export const SignUp = () => {
             type="submit"
             onClick={submitHandler}
           >
-            Sign In
+            Sign Up
           </button>
         </form>
         <br />
